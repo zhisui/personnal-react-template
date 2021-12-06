@@ -1,70 +1,128 @@
-# Getting Started with Create React App
+本模板只供个人日常写demo时使用，更完美的配置请参考相关文档
+# Eslint + Prettier + stylelint + Husky + Lint-staged
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### 创建样板文件
 
-## Available Scripts
+```
+yarn create react-app myapp --typescript
+```
 
-In the project directory, you can run:
+在使用yarn的时候如果发现报错，可以尝试使用npm
 
-### `yarn start`
+### 添加依赖
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+```
+yarn add prettier lint-staged husky stylelint stylelint-prettier stylelint-config-prettier stylelint-config-recommended eslint-config-prettier eslint-plugin-prettier -D
+```
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+注意stylelit默认版本是14.1.0，react不支持，可能会报错，建议安装低版本。
 
-### `yarn test`
+### 添加配置文件
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```
+touch .eslintrc .eslintignore .gitattributes .prettierrc .stylelintrc
+```
 
-### `yarn build`
+#### .eslintrc.js
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+后缀加上js,否则无法识别module.exports语句
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```
+module.exports = {
+  env: {
+    browser: true,
+    es2021: true,
+  },
+  extends: [
+    'eslint:recommended',
+    'plugin:react/recommended',
+    'plugin:@typescript-eslint/recommended',
+  ],
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    ecmaFeatures: {
+      jsx: true,
+    },
+    ecmaVersion: 13,
+  },
+  plugins: ['react', '@typescript-eslint', 'prettier'],
+  rules: {
+    'prettier/prettier': 'error',
+  },
+  extends: ['prettier'],
+}
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```
 
-### `yarn eject`
+####  .eslintignore
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+设置不需要eslint语法检查的部分
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```
+# build
+build/
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+####  .gitattributes
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+```
+* text=auto eol=lf
+```
 
-## Learn More
+####  .prettierrc
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```
+{
+  "trailingComma": "es5",
+  "tabWidth": 2,
+  "semi": false,
+  "singleQuote": true,
+  "endOfLine": "lf"
+}
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+####  .stylelintrc
 
-### Code Splitting
+```
+{
+  "extends": ["stylelint-prettier/recommended", "stylelint-config-standard"],
+  "plugins": ["stylelint-prettier"],
+  "rules": {
+    "prettier/prettier": true,
+    "unit-case": null,
+    "no-descending-specificity": null,
+    "block-no-empty": null,
+    "no-empty-source": [true, { "severity": "warning" }],
+    "declaration-colon-newline-after": null,
+    "function-name-case": null,
+    "indentation": null,
+    "no-invalid-double-slash-comments": null
+  }
+}
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+#### 在package.json条件以下字段
 
-### Analyzing the Bundle Size
+```
+{
+  "scripts": {
+    "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\"",
+    "lint:fix": "yarn lint --fix",
+    "stylelint": "stylelint \"src/**/*.{css,scss}\"",
+    "stylelint:fix": "yarn stylelint --fix"
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": ["prettier --write", "git add"]
+  },
+   "eslintConfig": {
+    "parser": "babel-eslint"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  }
+}
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
 
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
